@@ -83,6 +83,15 @@ const Navbar = () => {
           >
             Chatbot
           </Link>
+          <Link 
+            to="/privacy-policy" 
+            className={cn(
+              "nav-item text-sm font-medium text-gray-600 hover:text-medical-600",
+              location.pathname === "/privacy-policy" && "text-medical-600"
+            )}
+          >
+            Privacy
+          </Link>
         </nav>
         
         <div className="hidden md:flex items-center gap-4">
@@ -139,6 +148,13 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Chatbot
+            </Link>
+            <Link 
+              to="/privacy-policy" 
+              className="text-gray-600 hover:text-medical-600 py-2"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Privacy Policy
             </Link>
           </nav>
           <div className="flex flex-col gap-3">
