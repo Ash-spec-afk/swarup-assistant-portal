@@ -22,6 +22,36 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 });
 
+// const formSchema = z.object({
+// name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+// email: z.string().email({ message: "Please enter a valid email address" }),
+// password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+// confirmPassword: z.string().min(8, { message: "Password must be at least 8 characters" }),
+// dateOfBirth: z.string().date({message: "pleae enter a valid date"}),
+// age: z.number().int().range([0, 120], {
+// message: "Age must be between 0 and 120"
+// }),
+// gender: z.string().array().oneOf(['male', 'female', 'other'], {
+// default: 'male' }),
+//
+// height: z.number().int().min(0),
+// weight: z.number().int().min(0),
+//
+// habits: z.array(z.string()).minimum(1, {
+// message: "Please select at least one habit"
+// }),
+//
+// medicalHistory: z.string().allowNull().min(0, { message:
+// "Please provide your medical history" }),
+//
+// allergies: z.string().allowNull().min(0, { message:
+// "Please list any allergies" })
+// }).refine((data) => data.password ===
+// data.confirmPassword, {
+// message: "Passwords do not match",
+// path: ["confirmPassword"],
+// });
+
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
