@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogIn, UserPlus } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
@@ -95,9 +94,17 @@ const Navbar = () => {
         </nav>
         
         <div className="hidden md:flex items-center gap-4">
-          <Button variant="outline" className="rounded-full px-5">Login</Button>
-          <Link to="/chatbot">
-            <Button className="bg-medical-600 hover:bg-medical-700 text-white rounded-full px-5">Get Started</Button>
+          <Link to="/login">
+            <Button variant="outline" className="rounded-full px-5">
+              <LogIn className="mr-2 h-4 w-4" />
+              Login
+            </Button>
+          </Link>
+          <Link to="/signup">
+            <Button className="bg-medical-600 hover:bg-medical-700 text-white rounded-full px-5">
+              <UserPlus className="mr-2 h-4 w-4" />
+              Sign Up
+            </Button>
           </Link>
         </div>
         
@@ -158,10 +165,16 @@ const Navbar = () => {
             </Link>
           </nav>
           <div className="flex flex-col gap-3">
-            <Button variant="outline" className="w-full justify-center rounded-full">Login</Button>
-            <Link to="/chatbot" className="w-full">
+            <Link to="/login" className="w-full">
+              <Button variant="outline" className="w-full justify-center rounded-full">
+                <LogIn className="mr-2 h-4 w-4" />
+                Login
+              </Button>
+            </Link>
+            <Link to="/signup" className="w-full">
               <Button className="w-full justify-center bg-medical-600 hover:bg-medical-700 text-white rounded-full">
-                Get Started
+                <UserPlus className="mr-2 h-4 w-4" />
+                Sign Up
               </Button>
             </Link>
           </div>
