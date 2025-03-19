@@ -3,10 +3,12 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,26 +27,69 @@ const Navbar = () => {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <img 
             src="/lovable-uploads/50e23182-7dd1-4051-95cf-d2b13a63ccad.png" 
             alt="Swarup Logo" 
             className="h-10 w-auto" 
           />
           <span className="font-display text-xl font-medium text-medical-900">Swarup</span>
-        </a>
+        </Link>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#features" className="nav-item text-sm font-medium text-gray-600 hover:text-medical-600">Features</a>
-          <a href="#how-it-works" className="nav-item text-sm font-medium text-gray-600 hover:text-medical-600">How It Works</a>
-          <a href="#testimonials" className="nav-item text-sm font-medium text-gray-600 hover:text-medical-600">Testimonials</a>
-          <a href="#contact" className="nav-item text-sm font-medium text-gray-600 hover:text-medical-600">Contact</a>
+          <Link 
+            to="/#features" 
+            className={cn(
+              "nav-item text-sm font-medium text-gray-600 hover:text-medical-600",
+              location.pathname === "/" && location.hash === "#features" && "text-medical-600"
+            )}
+          >
+            Features
+          </Link>
+          <Link 
+            to="/#how-it-works" 
+            className={cn(
+              "nav-item text-sm font-medium text-gray-600 hover:text-medical-600",
+              location.pathname === "/" && location.hash === "#how-it-works" && "text-medical-600"
+            )}
+          >
+            How It Works
+          </Link>
+          <Link 
+            to="/#testimonials" 
+            className={cn(
+              "nav-item text-sm font-medium text-gray-600 hover:text-medical-600",
+              location.pathname === "/" && location.hash === "#testimonials" && "text-medical-600"
+            )}
+          >
+            Testimonials
+          </Link>
+          <Link 
+            to="/#contact" 
+            className={cn(
+              "nav-item text-sm font-medium text-gray-600 hover:text-medical-600",
+              location.pathname === "/" && location.hash === "#contact" && "text-medical-600"
+            )}
+          >
+            Contact
+          </Link>
+          <Link 
+            to="/chatbot" 
+            className={cn(
+              "nav-item text-sm font-medium text-gray-600 hover:text-medical-600",
+              location.pathname === "/chatbot" && "text-medical-600"
+            )}
+          >
+            Chatbot
+          </Link>
         </nav>
         
         <div className="hidden md:flex items-center gap-4">
           <Button variant="outline" className="rounded-full px-5">Login</Button>
-          <Button className="bg-medical-600 hover:bg-medical-700 text-white rounded-full px-5">Get Started</Button>
+          <Link to="/chatbot">
+            <Button className="bg-medical-600 hover:bg-medical-700 text-white rounded-full px-5">Get Started</Button>
+          </Link>
         </div>
         
         {/* Mobile Menu Button */}
@@ -60,40 +105,49 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-lg py-4 px-6 animate-fade-in">
           <nav className="flex flex-col gap-4 mb-6">
-            <a 
-              href="#features" 
+            <Link 
+              to="/#features" 
               className="text-gray-600 hover:text-medical-600 py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Features
-            </a>
-            <a 
-              href="#how-it-works" 
+            </Link>
+            <Link 
+              to="/#how-it-works" 
               className="text-gray-600 hover:text-medical-600 py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               How It Works
-            </a>
-            <a 
-              href="#testimonials" 
+            </Link>
+            <Link 
+              to="/#testimonials" 
               className="text-gray-600 hover:text-medical-600 py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Testimonials
-            </a>
-            <a 
-              href="#contact" 
+            </Link>
+            <Link 
+              to="/#contact" 
               className="text-gray-600 hover:text-medical-600 py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Contact
-            </a>
+            </Link>
+            <Link 
+              to="/chatbot" 
+              className="text-gray-600 hover:text-medical-600 py-2"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Chatbot
+            </Link>
           </nav>
           <div className="flex flex-col gap-3">
             <Button variant="outline" className="w-full justify-center rounded-full">Login</Button>
-            <Button className="w-full justify-center bg-medical-600 hover:bg-medical-700 text-white rounded-full">
-              Get Started
-            </Button>
+            <Link to="/chatbot" className="w-full">
+              <Button className="w-full justify-center bg-medical-600 hover:bg-medical-700 text-white rounded-full">
+                Get Started
+              </Button>
+            </Link>
           </div>
         </div>
       )}
