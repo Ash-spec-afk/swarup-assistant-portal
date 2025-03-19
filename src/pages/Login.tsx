@@ -20,6 +20,21 @@ const formSchema = z.object({
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  fetch("http://localhost:8080/api/isLoggedIn", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        name: "heyo",
+    }),
+    credentials: "include", // Ensure cookies are sent and received
+  }).then((response) => {
+    if (response.ok){
+      navigate('/')
+    }
+  });
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,17 +48,47 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // Simulate login (replace with actual authentication logic)
-      console.log("Login attempt:", values);
-      
-      // Mock successful login
-      setTimeout(() => {
+      // Send POST request to Flask API for login using fetch
+      const response = await fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+        credentials: "include", // Ensure cookies are sent and received
+      });
+
+      if (response.ok) {
+        // Assuming the Flask API sends a success message or a cookie upon success
         toast({
           title: "Login successful",
           description: "Welcome back to Swarup!",
         });
-        navigate("/chatbot");
-      }, 1500);
+        
+        // Navigate to the next page (e.g., chatbot page)
+        // navigate("/chatbot");
+      } else {
+        const errorData = await response.json();
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: errorData?.message || "Please check your credentials and try again.",
+        });
+      }
+      // // Simulate login (replace with actual authentication logic)
+      // console.log("Login attempt:", values);
+      //
+      // // Mock successful login
+      // setTimeout(() => {
+      //   toast({
+      //     title: "Login successful",
+      //     description: "Welcome back to Swarup!",
+      //   });
+      //   navigate("/chatbot");
+      // }, 1500);
     } catch (error) {
       toast({
         variant: "destructive",

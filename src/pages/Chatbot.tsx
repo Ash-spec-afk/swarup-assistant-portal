@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import ChatHeader from '@/components/chatbot/ChatHeader';
 import ChatMessages from '@/components/chatbot/ChatMessages';
 import ChatInput from '@/components/chatbot/ChatInput';
+import { useNavigate } from 'react-router-dom';
 
 // Types for our chat messages
 type MessageType = 'user' | 'assistant';
@@ -31,6 +32,25 @@ const ChatbotPage = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState({ code: 'en', name: 'English' });
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const navigate = useNavigate();
+
+
+  fetch("http://localhost:8080/api/isLoggedIn", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        name: "heyo",
+    }),
+    credentials: "include", // Ensure cookies are sent and received
+  }).then((response) => {
+    if ((!response.ok)){
+      navigate('/')
+    }
+  });
+  
+
 
   // Handle sending a message
   const handleSendMessage = () => {

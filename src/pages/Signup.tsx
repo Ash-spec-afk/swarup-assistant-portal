@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectValue, SelectTrigger, SelectItem, SelectContent } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,49 +13,90 @@ import { toast } from "@/hooks/use-toast";
 import { Lock, Mail, User, UserPlus } from "lucide-react";
 
 // Form validation schema
+
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters" }),
   confirmPassword: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  age: z.number().int().gte(0, {
+    message: "Age must be more than 0"
+  }).lte(120,{
+      message: "Age must be less than 120"
+  }),
+  gender: z.enum(['male', 'female', 'other'], {
+      // default: 'male',
+      message: 'please chose one of male, female or other'
+  }),
+  height: z.number().int().min(0),
+  weight: z.number().int().min(0),
+  medicalHistory: z.string().min(0, { 
+    message: "Please provide your medical history" 
+  }),
+  allergies: z.string().min(0, { 
+    message: "Please list any allergies"
+  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
 });
 
 // const formSchema = z.object({
-// name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-// email: z.string().email({ message: "Please enter a valid email address" }),
-// password: z.string().min(8, { message: "Password must be at least 8 characters" }),
-// confirmPassword: z.string().min(8, { message: "Password must be at least 8 characters" }),
-// dateOfBirth: z.string().date({message: "pleae enter a valid date"}),
-// age: z.number().int().range([0, 120], {
-// message: "Age must be between 0 and 120"
-// }),
-// gender: z.string().array().oneOf(['male', 'female', 'other'], {
-// default: 'male' }),
-//
-// height: z.number().int().min(0),
-// weight: z.number().int().min(0),
-//
-// habits: z.array(z.string()).minimum(1, {
-// message: "Please select at least one habit"
-// }),
-//
-// medicalHistory: z.string().allowNull().min(0, { message:
-// "Please provide your medical history" }),
-//
-// allergies: z.string().allowNull().min(0, { message:
-// "Please list any allergies" })
-// }).refine((data) => data.password ===
-// data.confirmPassword, {
-// message: "Passwords do not match",
-// path: ["confirmPassword"],
+//   name: z.string().min(2, { 
+//     message: "Name must be at least 2 characters" 
+//   }),
+//   email: z.string().email({ 
+//     message: "Please enter a valid email address" 
+//   }),
+//   password: z.string().min(8, { 
+//     message: "Password must be at least 8 characters" 
+//   }),
+//   confirmPassword: z.string().min(8, { 
+//     message: "Password must be at least 8 characters" 
+//   }),
+//   dateOfBirth: z.string().date({
+//     message: "pleae enter a valid date"
+//   }),
+//   age: z.number().int().range([0, 120], {
+//     message: "Age must be between 0 and 120"
+//   }),
+//   gender: z.string().array().oneOf(['male', 'female', 'other'], {
+//     default: 'male' 
+//   }),
+//   height: z.number().int().min(0),
+//   weight: z.number().int().min(0),
+//   habits: z.array(z.string()).minimum(1, {
+//     message: "Please select at least one habit"
+//   }),
+//   medicalHistory: z.string().allowNull().min(0, { 
+//     message: "Please provide your medical history" 
+//   }),
+//   allergies: z.string().allowNull().min(0, { 
+//     message: "Please list any allergies" })
+//   }).refine((data) => data.password ===
+//   data.confirmPassword, {
+//   message: "Passwords do not match",
+//   path: ["confirmPassword"],
 // });
 
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  fetch("http://localhost:8080/api/isLoggedIn", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        name: "heyo",
+      }),
+      credentials: "include", // Ensure cookies are sent and received
+    }).then((response) => {
+      if (response.ok){
+        navigate('/')
+      }
+    });
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,6 +105,12 @@ const Signup = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      age: 0,
+      gender: "male",
+      weight: 0,
+      height: 0,
+      medicalHistory: "",
+      allergies: "",
     },
   });
 
@@ -70,27 +118,54 @@ const Signup = () => {
     setIsLoading(true);
     
     try {
-      // Simulate signup (replace with actual authentication logic)
-      console.log("Signup attempt:", values);
-      
-      // Mock successful signup
-      setTimeout(() => {
+      // Send POST request to Flask API for login using fetch
+      const response = await fetch("http://localhost:8080/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          age: values.age,
+          gender: values.gender,
+          height: values.height,
+          weight: values.weight,
+          allergies: values.allergies,
+          medical_history: values.medicalHistory,
+        }),
+        credentials: "include", // Ensure cookies are sent and received
+      });
+
+      if (response.ok) {
+        // Assuming the Flask API sends a success message or a cookie upon success
         toast({
           title: "Account created",
-          description: "Welcome to Swarup! Your account has been successfully created.",
+          description: "Welcome back to Swarup!",
         });
+        
+        // Navigate to the next page (e.g., chatbot page)
         navigate("/login");
-      }, 1500);
+      } else {
+        const errorData = await response.json();
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: errorData?.message || "Please check your credentials and try again.",
+        });
+      }
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Signup failed",
-        description: "There was an error creating your account. Please try again.",
+        title: "Login failed",
+        description: "Please check your credentials and try again.",
       });
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-100 px-4">
@@ -123,6 +198,7 @@ const Signup = () => {
                       <div className="relative">
                         <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                         <Input
+                          type="text"
                           placeholder="John Doe"
                           className="pl-10"
                           disabled={isLoading}
@@ -144,6 +220,7 @@ const Signup = () => {
                       <div className="relative">
                         <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                         <Input
+                          type="email"
                           placeholder="you@example.com"
                           className="pl-10"
                           disabled={isLoading}
@@ -189,6 +266,157 @@ const Signup = () => {
                         <Input
                           type="password"
                           placeholder="••••••••"
+                          className="pl-10"
+                          disabled={isLoading}
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="age"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Age</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type="number"
+                          placeholder=""
+                          className="pl-10"
+                          disabled={isLoading}
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Convert the value to a number before setting it
+                            field.onChange(value === '' ? '' : Number(value)); 
+                          }}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gender</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Select
+                          placeholder=""
+                          className="pl-10"
+                          disabled={isLoading}
+                          {...field}
+                          value={field.value}
+                          onChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="male">&emsp;&ensp;Male</SelectItem>
+                            <SelectItem value="female">&emsp;&ensp; Female</SelectItem>
+                            <SelectItem value="other">&emsp;&ensp;  Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="weight"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Weight</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type="number"
+                          placeholder=""
+                          className="pl-10"
+                          disabled={isLoading}
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Convert the value to a number before setting it
+                            field.onChange(value === '' ? '' : Number(value)); 
+                          }}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="height"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Height</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type="number"
+                          placeholder=""
+                          className="pl-10"
+                          disabled={isLoading}
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Convert the value to a number before setting it
+                            field.onChange(value === '' ? '' : Number(value)); 
+                          }}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="medicalHistory"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Medical History</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          placeholder="Cancer"
+                          className="pl-10"
+                          disabled={isLoading}
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="allergies"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Allergies</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          placeholder="peanuts"
                           className="pl-10"
                           disabled={isLoading}
                           {...field}
