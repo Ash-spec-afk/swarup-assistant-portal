@@ -106,7 +106,7 @@ const Signup = () => {
       password: "",
       confirmPassword: "",
       age: 0,
-      gender: "male",
+      gender: "",
       weight: 0,
       height: 0,
       medicalHistory: "",
@@ -310,23 +310,13 @@ const Signup = () => {
                     <FormLabel>Gender</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Select
+                        <Input
+                          type="text"
                           placeholder=""
                           className="pl-10"
                           disabled={isLoading}
                           {...field}
-                          value={field.value}
-                          onChange={(value) => field.onChange(value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="male">&emsp;&ensp;Male</SelectItem>
-                            <SelectItem value="female">&emsp;&ensp; Female</SelectItem>
-                            <SelectItem value="other">&emsp;&ensp;  Other</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -468,3 +458,6 @@ const Signup = () => {
 };
 
 export default Signup;
+
+
+

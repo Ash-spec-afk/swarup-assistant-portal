@@ -67,16 +67,42 @@ const ChatbotPage = () => {
     setMessages((prev) => [...prev, newUserMessage]);
     setInputValue('');
     
-    // Simulate assistant response (in a real app, this would be an API call)
-    setTimeout(() => {
-      const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        content: "I understand you're experiencing these symptoms. Let me ask you a few more questions to better understand your condition.",
-        type: 'assistant',
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-    }, 1000);
+    fetch("http://localhost:8080/api/addSymptoms", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: inputValue }),
+      credentials: "include", // Ensure cookies are sent and received
+    }).then((response) => {
+      if (response.ok) {
+        // If successful, display message from the doctor
+        // const newUserMessage: ChatMessage = {
+        //     id: Date.now().toString(),
+        //     content: "The doctor will get back to you soon.",
+        //     type: 'assistant',
+        //     timestamp: new Date(),
+        //   }
+        
+        // Simulate assistant response (in a real app, this would be an API call)
+        setTimeout(() => {
+          const assistantMessage: ChatMessage = {
+            id: (Date.now() + 1).toString(),
+            content: "the doctor will get back to you soon",
+            type: 'assistant',
+            timestamp: new Date(),
+          };
+          setMessages((prev) => [...prev, assistantMessage]);
+        }, 1000);
+      } else {
+        alert("Failed to send symptoms. Please try again.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error sending symptoms:", error);
+      alert("An error occurred. Please try again later.");
+    });
+   
   };
 
   // Handle voice recording
